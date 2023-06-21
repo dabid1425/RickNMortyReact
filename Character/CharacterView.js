@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, ActivityIndicator } from 'react-native';
 
-const CharacterView = ({ characterViewModel }) => {
+const CharacterView = ({ viewModel }) => {
   useEffect(() => {
-    characterViewModel.fetchCharacters();
+    viewModel.fetchCharacters();
   }, []);
 
   const handleLoadMore = () => {
-    characterViewModel.fetchCharacters();
+    viewModel.fetchCharacters();
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={characterViewModel.characters}
+        data={viewModel.characters}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.characterContainer}>
@@ -26,7 +26,7 @@ const CharacterView = ({ characterViewModel }) => {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={() =>
-          characterViewModel.isLoading ? (
+          viewModel.isLoading ? (
             <ActivityIndicator size="large" color="gray" />
           ) : null
         }

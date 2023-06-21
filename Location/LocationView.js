@@ -1,13 +1,30 @@
-import React, { useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView, ActivityIndicator} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, StyleSheet, SafeAreaView, ActivityIndicator } from 'react-native';
 
-const EpisodeView = ({ viewModel }) => {
+const LocationView = ({ viewModel, isActive }) => {
+  const [shouldFetch, setShouldFetch] = useState(false);
+
   useEffect(() => {
-    viewModel.fetchEpisodes();
-  }, []);
+    if (isActive && shouldFetch) {
+      viewModel.fetchLocations();
+      setShouldFetch(false);
+    }
+  }, [isActive, shouldFetch]);
+
+  useEffect(() => {
+    if (isActive) {
+      setShouldFetch(false);
+    }
+  }, [isActive]);
+
+  useEffect(() => {
+    if (isActive && viewModel.locations.length === 0) {
+      setShouldFetch(true);
+    }
+  }, [isActive, viewModel.locations]);
 
   const handleLoadMore = () => {
-    viewModel.fetchEpisodes();
+    viewModel.fetchLocations();
   };
 
   const renderFooter = () => {
@@ -21,18 +38,19 @@ const EpisodeView = ({ viewModel }) => {
       return null;
     }
   };
+
   const renderItem = ({ item }) => (
-    <View style={styles.episodeContainer}>
-      <Text style={styles.episodeName}>{item.name}</Text>
-      <Text>Air Date: {item.airDate}</Text>
-      <Text>Episode: {item.episode}</Text>
+    <View style={styles.locationContainer}>
+      <Text style={styles.locationName}>{item.name}</Text>
+      <Text>Type: {item.type}</Text>
+      <Text>Dimension: {item.dimension}</Text>
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={viewModel.episodes}
+        data={viewModel.locations}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         onEndReached={handleLoadMore}
@@ -46,14 +64,12 @@ const EpisodeView = ({ viewModel }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  episodeContainer: {
+  locationContainer: {
     marginVertical: 10,
     alignItems: 'center',
   },
-  episodeName: {
+  locationName: {
     marginTop: 10,
     fontSize: 16,
     fontWeight: 'bold',
@@ -65,4 +81,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EpisodeView;
+export default LocationView;

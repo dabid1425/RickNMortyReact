@@ -3,15 +3,20 @@ import CharacterViewModel from './Character/CharacterViewModel';
 import CharacterView from './Character/CharacterView';
 import EpisodeViewModel from './Episode/EpisodeViewModel';
 import EpisodeView from './Episode/EpisodeView';
+import LocationViewModel from './Location/LocationViewModel';
+import LocationView from './Location/LocationView';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createAppContainer } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 const characterViewModel = new CharacterViewModel();
 const episodeViewModel = new EpisodeViewModel();
+const locationModel = new LocationViewModel();
+
 const TabNavigator = createBottomTabNavigator(
   {
     Characters: {
-      screen: () => <CharacterView characterViewModel={characterViewModel} />,
+      screen: () => <CharacterView viewModel={characterViewModel} />,
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => <Icon name="user" size={20} color={tintColor} />,
       },
@@ -20,6 +25,12 @@ const TabNavigator = createBottomTabNavigator(
       screen: () => <EpisodeView viewModel={episodeViewModel} />,
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => <Icon name="video-camera" size={20} color={tintColor} />,
+      },
+    },
+    Locations: {
+      screen: () => <LocationView viewModel={locationModel} />,
+      navigationOptions: {
+        tabBarIcon: ({ tintColor }) => <Icon name="globe" size={20} color={tintColor} />,
       },
     },
     // Add more tabs here if needed
@@ -31,7 +42,9 @@ const TabNavigator = createBottomTabNavigator(
     },
   }
 );
-const AppContainer = createAppContainer(TabNavigator)
+
+const AppContainer = createAppContainer(TabNavigator);
+
 export default function App() {
   return <AppContainer />;
 }
