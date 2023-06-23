@@ -9,7 +9,6 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createAppContainer, withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const locationModel = new LocationViewModel();
 
 const TabNavigator = createBottomTabNavigator(
   {
@@ -26,7 +25,7 @@ const TabNavigator = createBottomTabNavigator(
       },
     },
     Locations: {
-      screen: () => <LocationView viewModel={locationModel} />,
+      screen: withNavigation(LocationScreen),
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => <Icon name="globe" size={20} color={tintColor} />,
       },
@@ -46,6 +45,10 @@ const TabNavigator = createBottomTabNavigator(
       const characterViewModel = navigation.state.routes.find(route => route.routeName === 'Characters').params?.viewModel;
       if (characterViewModel) {
         characterViewModel.fetchCharacters();
+      }
+      const locationViewModel = navigation.state.routes.find(route => route.routeName === 'Locations').params?.viewModel;
+      if (locationViewModel) {
+        locationViewModel.fetchLocations();
       }
       defaultHandler();
     },
@@ -88,4 +91,19 @@ function CharacterScreen({ navigation }) {
   }, []);
 
   return <CharacterView viewModel={characterViewModel} />;
+}
+function LocationScreen({ navigation }) {
+  const locationViewModel = new LocationViewModel();
+
+  useEffect(() => {
+    const focusListener = navigation.addListener('willFocus', () => {
+      locationViewModel.fetchLocations();
+    });
+
+    return () => {
+      focusListener.remove();
+    };
+  }, []);
+
+  return <LocationView viewModel={locationViewModel} />;
 }

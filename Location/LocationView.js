@@ -1,30 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView, ActivityIndicator } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, FlatList, StyleSheet, SafeAreaView, ActivityIndicator} from 'react-native';
+import PropTypes from 'prop-types';
+import { withNavigation } from 'react-navigation';
 
-const LocationView = ({ viewModel, isActive }) => {
-  const [shouldFetch, setShouldFetch] = useState(false);
-
-  useEffect(() => {
-    if (isActive && shouldFetch) {
-      viewModel.fetchLocations();
-      setShouldFetch(false);
-    }
-  }, [isActive, shouldFetch]);
+function LocationView({ viewModel, navigation }) {
+  const flatListRef = useRef(null);
 
   useEffect(() => {
-    if (isActive) {
-      setShouldFetch(false);
-    }
-  }, [isActive]);
+    const focusListener = navigation.addListener('didFocus', () => {
+      viewModel.setPageNumber(1); // Reset the page number to 1 when the screen is focused
+      viewModel.fetchLocations(true); // Pass `true` to clear the list when reloading
+      resetFlatList();
+    });
 
-  useEffect(() => {
-    if (isActive && viewModel.locations.length === 0) {
-      setShouldFetch(true);
-    }
-  }, [isActive, viewModel.locations]);
+    return () => {
+      focusListener.remove();
+    };
+  }, []);
 
-  const handleLoadMore = () => {
+  const handleEndReached = () => {
     viewModel.fetchLocations();
+  };
+  const resetFlatList = () => {
+    flatListRef.current.scrollToOffset({ animated: false, offset: 0 });
   };
 
   const renderFooter = () => {
@@ -50,20 +48,27 @@ const LocationView = ({ viewModel, isActive }) => {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
+        ref={flatListRef}
         data={viewModel.locations}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
-        onEndReached={handleLoadMore}
+        onEndReached={handleEndReached}
         onEndReachedThreshold={0.5}
         ListFooterComponent={renderFooter}
       />
     </SafeAreaView>
   );
 };
+LocationView.propTypes = {
+  viewModel: PropTypes.object.isRequired,
+  navigation: PropTypes.object.isRequired,
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   locationContainer: {
     marginVertical: 10,
@@ -81,4 +86,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LocationView;
+export default withNavigation(LocationView);
