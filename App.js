@@ -9,13 +9,12 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createAppContainer, withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const characterViewModel = new CharacterViewModel();
 const locationModel = new LocationViewModel();
 
 const TabNavigator = createBottomTabNavigator(
   {
     Characters: {
-      screen: () => <CharacterView viewModel={characterViewModel} />,
+      screen: withNavigation(CharacterScreen),
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => <Icon name="user" size={20} color={tintColor} />,
       },
@@ -44,6 +43,10 @@ const TabNavigator = createBottomTabNavigator(
       if (episodeViewModel) {
         episodeViewModel.fetchEpisodes();
       }
+      const characterViewModel = navigation.state.routes.find(route => route.routeName === 'Characters').params?.viewModel;
+      if (characterViewModel) {
+        characterViewModel.fetchCharacters();
+      }
       defaultHandler();
     },
   }
@@ -69,4 +72,20 @@ function EpisodeScreen({ navigation }) {
   }, []);
 
   return <EpisodeView viewModel={episodeViewModel} />;
+}
+
+function CharacterScreen({ navigation }) {
+  const characterViewModel = new CharacterViewModel();
+
+  useEffect(() => {
+    const focusListener = navigation.addListener('willFocus', () => {
+      characterViewModel.fetchCharacters();
+    });
+
+    return () => {
+      focusListener.remove();
+    };
+  }, []);
+
+  return <CharacterView viewModel={characterViewModel} />;
 }

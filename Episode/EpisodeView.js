@@ -53,7 +53,7 @@ function EpisodeView({ viewModel, navigation }) {
       renderItem={renderItem}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.5}
-        ListFooterComponent={renderFooter}
+      ListFooterComponent={renderFooter}
     />
   </SafeAreaView>
   );

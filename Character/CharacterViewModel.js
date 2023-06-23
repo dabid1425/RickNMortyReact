@@ -1,40 +1,63 @@
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import CharacterModel from './CharacterModel';
 
-class CharacterViewModel {
-  constructor() {
-    this.page = 1;
-    this.characters = [];
-    this.isLoading = false;
-    this.hasMoreCharacters = true;
-  }
+function CharacterViewModel() {
+  const [characters, setCharacters] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
 
-  async fetchCharacters() {
+  useEffect(() => {
+    fetchCharacters();
+  
+    // Cleanup function
+    return () => {
+      // Cancel ongoinrg requests or perform any cleanup if needed
+      // For example, you can use an Axios cancel token to cancel the request
+      // Here's an example assuming you have an axiosInstance available
+  
+      // Create a cancel token source
+      const cancelTokenSource = axios.CancelToken.source();
+  
+      // Cancel the ongoing request using the cancel token
+      axiosInstance.cancel('Request canceled by cleanup', { cancelToken: cancelTokenSource.token });
+  
+      // Optionally perform any other cleanup tasks
+  
+      // Make sure to clean up the cancel token source
+      cancelTokenSource.cancel();
+    };
+  }, []);
+  
+
+  const fetchCharacters = async (clearList = false) => {
+    if (loading) return;
+
+    setLoading(true);
+
     try {
-      if (!this.hasMoreCharacters || this.isLoading) {
-        return;
-      }
-
-      this.isLoading = true;
-      const response = await axios.get(`https://rickandmortyapi.com/api/character/?page=${this.page}`);
+      const response = await axios.get(`https://rickandmortyapi.com/api/character?page=${page}`);
       const results = response.data.results;
+      const newCharacters = results.map(({ id, name, image, status, species, gender, origin, location,episode, url, created }) => new CharacterModel(id, name, image, status, species, gender, origin, location,episode, url, created));
 
-      if (results.length === 0) {
-        this.hasMoreCharacters = false;
+      if (clearList) {
+        setCharacters(newCharacters);
       } else {
-        const newCharacters = results.map((result) => {
-          return new CharacterModel(result.id, result.name, result.image, result.status, result.species, result.gender,result.origin,result.location,result.image,result.episode,result.url,result.created);
-        });
-
-        this.characters = [...this.characters, ...newCharacters];
-        this.page++;
+        setCharacters(prevCharacters => [...prevCharacters, ...newCharacters]);
+        setPage(prevPage => prevPage + 1);
       }
     } catch (error) {
-      console.error(error);
+      //console.error('Failed to fetch characters:', error);
     } finally {
-      this.isLoading = false;
+      setLoading(false);
     }
-  }
+  };
+
+  const setPageNumber = (pageNumber) => {
+    setPage(pageNumber);
+  };
+
+  return { characters, loading, fetchCharacters, setPageNumber };
 }
 
 export default CharacterViewModel;
