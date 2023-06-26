@@ -67,8 +67,6 @@ EpisodeView.propTypes = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   episodeContainer: {
     marginVertical: 10,

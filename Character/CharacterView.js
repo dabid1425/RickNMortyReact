@@ -35,15 +35,36 @@ function CharacterView({ viewModel, navigation }) {
       return null;
     }
   };
-   const renderItem = ({ item }) => (
-    <View style={styles.characterContainer}>
-      <Image source={{ uri: item.image }} style={styles.characterImage} />
-      <Text style={styles.characterName}>{item.name}</Text>
-      <Text>Status: {item.status}</Text>
-      <Text>Species: {item.species}</Text>
-      </View>
-  );
+  const renderItem = ({ item }) => {
+    let borderColor = '';
+    const status = item.species.toLowerCase(); // Convert status to lowercase
+    switch (status) {
+      case 'alive':
+        borderColor = 'green';
+        break;
+      case 'dead':
+        borderColor = 'red';
+        break;
+      case 'unknown':
+        borderColor = 'yellow';
+        break;
+    }
 
+    const characterBorderStyle = {
+      borderWidth: 2,
+      borderRadius: 10,
+      borderColor: borderColor,
+    };
+
+    return (
+      <View style={[styles.characterContainer, characterBorderStyle]}>
+        <Image source={{ uri: item.image }} style={styles.characterImage} />
+        <Text style={styles.characterName}>{item.name}</Text>
+        <Text>Status: {item.species}</Text>
+        <Text>Species: {item.status}</Text>
+      </View>
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
@@ -66,6 +87,7 @@ CharacterView.propTypes = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    margin: 20,
   },
   characterContainer: {
     marginVertical: 10,

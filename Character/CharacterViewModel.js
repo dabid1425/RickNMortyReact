@@ -41,6 +41,7 @@ function CharacterViewModel() {
       const newCharacters = results.map(({ id, name, image, status, species, gender, origin, location,episode, url, created }) => new CharacterModel(id, name, image, status, species, gender, origin, location,episode, url, created));
 
       if (clearList) {
+        setCharacters([])
         setCharacters(newCharacters);
       } else {
         setCharacters(prevCharacters => [...prevCharacters, ...newCharacters]);
