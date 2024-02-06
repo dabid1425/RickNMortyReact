@@ -61,7 +61,7 @@ function CharacterView({ viewModel, navigation }) {
         <Image source={{ uri: item.image }} style={styles.characterImage} />
         <Text style={styles.characterName}>{item.name}</Text>
         <Text>Status: {item.species}</Text>
-        <Text>Species: {item.status}</Text>
+        <Text style={styles.characteSpecies}>Species: {item.status}</Text>
       </View>
     );
   };
@@ -70,7 +70,7 @@ function CharacterView({ viewModel, navigation }) {
       <FlatList
         ref={flatListRef}
         data={viewModel.characters}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => `${item.id}_${index}`}
         renderItem={renderItem}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
@@ -96,12 +96,16 @@ const styles = StyleSheet.create({
   characterImage: {
     width: 100,
     height: 100,
+    marginTop: 10,
     borderRadius: 50,
   },
   characterName: {
     marginTop: 10,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  characteSpecies: {
+    marginBottom: 10,
   },
 });
 

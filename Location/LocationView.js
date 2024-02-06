@@ -50,7 +50,7 @@ function LocationView({ viewModel, navigation }) {
       <FlatList
         ref={flatListRef}
         data={viewModel.locations}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => `${item.id}_${index}`}
         renderItem={renderItem}
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.5}

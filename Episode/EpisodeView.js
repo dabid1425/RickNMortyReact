@@ -49,7 +49,7 @@ function EpisodeView({ viewModel, navigation }) {
     <FlatList
       ref={flatListRef}
       data={viewModel.episodes}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item, index) => `${item.id}_${index}`}
       renderItem={renderItem}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.5}
