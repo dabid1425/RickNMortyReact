@@ -11,6 +11,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createAppContainer, withNavigation } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import LocationDetailScreen from './Location/LocationDetailScreen';
 
 const CharacterStack = createStackNavigator(
   {
@@ -36,6 +37,19 @@ const EpisodeStack = createStackNavigator(
     },
   }
 );
+
+const LocationStack = createStackNavigator(
+  {
+    LocationList: LocationScreen,
+    LocationDetail: LocationDetailScreen,
+  },
+  {
+    initialRouteName: 'LocationList',
+    defaultNavigationOptions: {
+      headerShown: false,
+    },
+  }
+);
 const TabNavigator = createBottomTabNavigator(
   {
     Characters: {
@@ -51,7 +65,7 @@ const TabNavigator = createBottomTabNavigator(
       },
     },
     Locations: {
-      screen: withNavigation(LocationScreen),
+      screen: LocationStack,
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => <Icon name="globe" size={20} color={tintColor} />,
       },

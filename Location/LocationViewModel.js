@@ -38,7 +38,7 @@ function LocationViewModel() {
     try {
       const response = await axios.get(`https://rickandmortyapi.com/api/location?page=${page}`);
       const results = response.data.results;
-      const newLocations = results.map(({ id, name, type, dimension }) => new LocationModel(id, name, type, dimension));
+      const newLocations = results.map(({ id, name, type, dimension, residents, url, created }) => new LocationModel(id, name, type, dimension, residents, url, created));
 
       if (clearList) {
         setLocations(newLocations);

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView, ActivityIndicator} from 'react-native';
+import { View, Text, FlatList, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { withNavigation } from 'react-navigation';
 
@@ -21,6 +21,7 @@ function LocationView({ viewModel, navigation }) {
   const handleEndReached = () => {
     viewModel.fetchLocations();
   };
+
   const resetFlatList = () => {
     flatListRef.current.scrollToOffset({ animated: false, offset: 0 });
   };
@@ -37,12 +38,18 @@ function LocationView({ viewModel, navigation }) {
     }
   };
 
+  const handleLocationPress = (location) => {
+    navigation.navigate('LocationDetail', { location });
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.locationContainer}>
-      <Text style={styles.locationName}>{item.name}</Text>
-      <Text>Type: {item.type}</Text>
-      <Text>Dimension: {item.dimension}</Text>
-    </View>
+    <TouchableOpacity onPress={() => handleLocationPress(item)}>
+      <View style={styles.locationContainer}>
+        <Text style={styles.locationName}>{item.name}</Text>
+        <Text>Type: {item.type}</Text>
+        <Text>Dimension: {item.dimension}</Text>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -59,6 +66,7 @@ function LocationView({ viewModel, navigation }) {
     </SafeAreaView>
   );
 };
+
 LocationView.propTypes = {
   viewModel: PropTypes.object.isRequired,
   navigation: PropTypes.object.isRequired,
