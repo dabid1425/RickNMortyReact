@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView, ActivityIndicator} from 'react-native';
+import { View, Text, FlatList, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { withNavigation } from 'react-navigation';
 
@@ -21,6 +21,7 @@ function EpisodeView({ viewModel, navigation }) {
   const handleEndReached = () => {
     viewModel.fetchEpisodes();
   };
+
   const resetFlatList = () => {
     flatListRef.current.scrollToOffset({ animated: false, offset: 0 });
   };
@@ -36,26 +37,34 @@ function EpisodeView({ viewModel, navigation }) {
       return null;
     }
   };
+
+  const handleEpisodePress = (episode) => {
+    // Navigate to the episode detail screen with the selected episode
+    navigation.navigate('EpisodeDetail', { episode });
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.episodeContainer}>
-      <Text style={styles.episodeName}>{item.name}</Text>
-      <Text>Air Date: {item.air_date}</Text>
-      <Text>Episode: {item.episode}</Text>
-    </View>
+    <TouchableOpacity onPress={() => handleEpisodePress(item)}>
+      <View style={styles.episodeContainer}>
+        <Text style={styles.episodeName}>{item.name}</Text>
+        <Text>Air Date: {item.air_date}</Text>
+        <Text>Episode: {item.episode}</Text>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-    <FlatList
-      ref={flatListRef}
-      data={viewModel.episodes}
-      keyExtractor={(item, index) => `${item.id}_${index}`}
-      renderItem={renderItem}
-      onEndReached={handleEndReached}
-      onEndReachedThreshold={0.5}
-      ListFooterComponent={renderFooter}
-    />
-  </SafeAreaView>
+      <FlatList
+        ref={flatListRef}
+        data={viewModel.episodes}
+        keyExtractor={(item, index) => `${item.id}_${index}`}
+        renderItem={renderItem}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={renderFooter}
+      />
+    </SafeAreaView>
   );
 }
 
@@ -83,4 +92,5 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
 });
+
 export default withNavigation(EpisodeView);

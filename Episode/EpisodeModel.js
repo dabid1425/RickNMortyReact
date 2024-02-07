@@ -1,11 +1,13 @@
 class EpisodeModel {
-    constructor(id, name, air_date, episode) {
-      this.id = id;
-      this.name = name;
-      this.air_date = air_date;
-      this.episode = episode;
-    }
+  constructor(id, name, airDate, episode, characters, url, created) {
+    this.id = id;
+    this.name = name;
+    this.airDate = airDate;
+    this.episode = episode;
+    this.characters = characters;
+    this.url = url;
+    this.created = created;
   }
-  
-  export default EpisodeModel;
-  
+}
+
+export default EpisodeModel;

@@ -4,6 +4,7 @@ import CharacterView from './Character/CharacterView';
 import CharacterDetailScreen from './Character/CharacterDetailScreen';
 import EpisodeViewModel from './Episode/EpisodeViewModel';
 import EpisodeView from './Episode/EpisodeView';
+import EpisodeDetailScreen from './Episode/EpisodeDetailScreen';
 import LocationViewModel from './Location/LocationViewModel';
 import LocationView from './Location/LocationView';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
@@ -23,6 +24,18 @@ const CharacterStack = createStackNavigator(
     },
   }
 );
+const EpisodeStack = createStackNavigator(
+  {
+    EpisodeList: EpisodeScreen,
+    EpisodeDetail: EpisodeDetailScreen,
+  },
+  {
+    initialRouteName: 'EpisodeList',
+    defaultNavigationOptions: {
+      headerShown: false,
+    },
+  }
+);
 const TabNavigator = createBottomTabNavigator(
   {
     Characters: {
@@ -32,7 +45,7 @@ const TabNavigator = createBottomTabNavigator(
       },
     },
     Episodes: {
-      screen: withNavigation(EpisodeScreen),
+      screen: EpisodeStack,
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => <Icon name="video-camera" size={20} color={tintColor} />,
       },

@@ -38,7 +38,7 @@ function EpisodeViewModel() {
     try {
       const response = await axios.get(`https://rickandmortyapi.com/api/episode?page=${page}`);
       const results = response.data.results;
-      const newEpisodes = results.map(({ id, name, air_date, episode}) => new EpisodeModel(id, name, air_date, episode));
+      const newEpisodes = results.map(({ id, name, air_date, episode, characters }) => new EpisodeModel(id, name, air_date, episode, characters));
 
       if (clearList) {
         setEpisodes(newEpisodes);
