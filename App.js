@@ -17,6 +17,7 @@ const CharacterStack = createStackNavigator(
   {
     CharacterList: CharacterScreen,
     CharacterDetail: CharacterDetailScreen,
+    EpisodeDetail: EpisodeDetailScreen,
   },
   {
     initialRouteName: 'CharacterList',
@@ -29,6 +30,7 @@ const EpisodeStack = createStackNavigator(
   {
     EpisodeList: EpisodeScreen,
     EpisodeDetail: EpisodeDetailScreen,
+    CharacterDetail: CharacterDetailScreen,
   },
   {
     initialRouteName: 'EpisodeList',
@@ -42,6 +44,7 @@ const LocationStack = createStackNavigator(
   {
     LocationList: LocationScreen,
     LocationDetail: LocationDetailScreen,
+    CharacterDetail: CharacterDetailScreen,
   },
   {
     initialRouteName: 'LocationList',

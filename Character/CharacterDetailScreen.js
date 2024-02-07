@@ -27,6 +27,10 @@ const CharacterDetailScreen = ({ navigation }) => {
     fetchEpisodes();
   }, [character]);
 
+  const handleEpisodePress = (episode) => {
+    navigation.navigate('EpisodeDetail', { episode });
+  };
+  
   return (
     <View style={{ flex: 1 }}>
       <View style={{ marginTop: 50, flexDirection: 'row', alignItems: 'center', padding: 10 }}>
@@ -55,10 +59,13 @@ const CharacterDetailScreen = ({ navigation }) => {
             data={episodes}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleEpisodePress(item)}>
                 <View style={{ marginRight: 10, borderWidth: 1, borderColor: 'black', padding: 10 }}>
-                <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
-                <Text>Air Date: {item.air_date}</Text>
-              </View>
+                  <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
+                  <Text>Air Date: {item.air_date}</Text>
+                </View>
+              </TouchableOpacity>
+
             )}
           />
         )}

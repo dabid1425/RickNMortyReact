@@ -26,6 +26,9 @@ const EpisodeDetailScreen = ({ navigation }) => {
     fetchCharacters();
   }, [episode]);
 
+  const handleCharacterPress = (character) => {
+    navigation.navigate('CharacterDetail', { character });
+  };
   return (
     <View style={{ flex: 1 }}>
       <View style={{ marginTop: 50, flexDirection: 'row', alignItems: 'center', padding: 10 }}>
@@ -53,12 +56,14 @@ const EpisodeDetailScreen = ({ navigation }) => {
             data={characters}
             keyExtractor={(item, index) => `${item.id}_${index}`}
             renderItem={({ item }) => (
-              <View style={{ marginRight: 10 }}>
-                <Image source={{ uri: item.image }} style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 5 }} />
-                <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
-                <Text>Status: {item.status}</Text>
-                <Text>Species: {item.species}</Text>
-              </View>
+           <TouchableOpacity onPress={() => handleCharacterPress(item)}>
+                <View style={{ marginRight: 10 }}>
+                  <Image source={{ uri: item.image }} style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 5 }} />
+                  <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
+                  <Text>Status: {item.status}</Text>
+                  <Text>Species: {item.species}</Text>
+                </View>
+              </TouchableOpacity>
             )}
           />
         )}
