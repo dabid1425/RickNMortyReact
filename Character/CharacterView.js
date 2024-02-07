@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, ActivityIndicator} from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity} from 'react-native';
 import PropTypes from 'prop-types';
 import { withNavigation } from 'react-navigation';
 
@@ -35,6 +35,11 @@ function CharacterView({ viewModel, navigation }) {
       return null;
     }
   };
+
+  const handleCellPress = (character) => {
+    navigation.navigate('CharacterDetail', { character }); // Navigate to CharacterDetailScreen with character data
+  };
+
   const renderItem = ({ item }) => {
     let borderColor = '';
     const status = item.species.toLowerCase(); // Convert status to lowercase
@@ -57,12 +62,14 @@ function CharacterView({ viewModel, navigation }) {
     };
 
     return (
-      <View style={[styles.characterContainer, characterBorderStyle]}>
-        <Image source={{ uri: item.image }} style={styles.characterImage} />
-        <Text style={styles.characterName}>{item.name}</Text>
-        <Text>Status: {item.species}</Text>
-        <Text style={styles.characteSpecies}>Species: {item.status}</Text>
-      </View>
+      <TouchableOpacity onPress={() => handleCellPress(item)}>
+        <View style={[styles.characterContainer, characterBorderStyle]}>
+          <Image source={{ uri: item.image }} style={styles.characterImage} />
+          <Text style={styles.characterName}>{item.name}</Text>
+          <Text>Status: {item.species}</Text>
+          <Text style={styles.characteSpecies}>Species: {item.status}</Text>
+        </View>
+      </TouchableOpacity>
     );
   };
   return (

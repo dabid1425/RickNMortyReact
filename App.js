@@ -1,19 +1,32 @@
 import React, { useEffect } from 'react';
 import CharacterViewModel from './Character/CharacterViewModel';
 import CharacterView from './Character/CharacterView';
+import CharacterDetailScreen from './Character/CharacterDetailScreen';
 import EpisodeViewModel from './Episode/EpisodeViewModel';
 import EpisodeView from './Episode/EpisodeView';
 import LocationViewModel from './Location/LocationViewModel';
 import LocationView from './Location/LocationView';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createAppContainer, withNavigation } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-
+const CharacterStack = createStackNavigator(
+  {
+    CharacterList: CharacterScreen,
+    CharacterDetail: CharacterDetailScreen,
+  },
+  {
+    initialRouteName: 'CharacterList',
+    defaultNavigationOptions: {
+      headerShown: false,
+    },
+  }
+);
 const TabNavigator = createBottomTabNavigator(
   {
     Characters: {
-      screen: withNavigation(CharacterScreen),
+      screen: CharacterStack,
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => <Icon name="user" size={20} color={tintColor} />,
       },
