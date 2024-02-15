@@ -2,14 +2,16 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity} from 'react-native';
 import PropTypes from 'prop-types';
 import { withNavigation } from 'react-navigation';
+import useCharacterViewModel from './CharacterViewModel'; // Import the custom hook
 
-function CharacterView({ viewModel, navigation }) {
+function CharacterView({ navigation }) {
+  const { characters, loading, fetchCharacters, setPageNumber } = useCharacterViewModel(); // Use the custom hook
   const flatListRef = useRef(null);
 
   useEffect(() => {
     const focusListener = navigation.addListener('didFocus', () => {
-      viewModel.setPageNumber(1); // Reset the page number to 1 when the screen is focused
-      viewModel.fetchCharacters(true); // Pass `true` to clear the list when reloading
+      setPageNumber(1); // Reset the page number to 1 when the screen is focused
+      fetchCharacters(true); // Pass `true` to clear the list when reloading
       resetFlatList();
     });
 
@@ -19,13 +21,13 @@ function CharacterView({ viewModel, navigation }) {
   }, []);
 
   const handleLoadMore = () => {
-    viewModel.fetchCharacters();
+    fetchCharacters();
   };
   const resetFlatList = () => {
     flatListRef.current.scrollToOffset({ animated: false, offset: 0 });
   };
   const renderFooter = () => {
-    if (viewModel.isLoading) {
+    if (loading) {
       return (
         <View style={styles.footerContainer}>
           <ActivityIndicator size="large" color="gray" />
@@ -76,7 +78,7 @@ function CharacterView({ viewModel, navigation }) {
     <SafeAreaView style={styles.container}>
       <FlatList
         ref={flatListRef}
-        data={viewModel.characters}
+        data={characters}
         keyExtractor={(item, index) => `${item.id}_${index}`}
         renderItem={renderItem}
         onEndReached={handleLoadMore}
@@ -88,7 +90,6 @@ function CharacterView({ viewModel, navigation }) {
 };
 
 CharacterView.propTypes = {
-  viewModel: PropTypes.object.isRequired,
   navigation: PropTypes.object.isRequired,
 };
 const styles = StyleSheet.create({
