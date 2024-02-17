@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity} from 'react-native';
 import PropTypes from 'prop-types';
 import { withNavigation } from 'react-navigation';
@@ -7,13 +7,23 @@ import useCharacterViewModel from './CharacterViewModel';
 function CharacterView({ navigation }) {
   const { characters, loading, fetchCharacters } = useCharacterViewModel();
   const flatListRef = useRef(null);
+  const [isFetching, setIsFetching] = useState(false);
 
   const handleLoadMore = () => {
-    fetchCharacters();
+    if (!isFetching) {
+      setIsFetching(true);
+      fetchCharacters();
+    }
   };
 
+  useEffect(() => {
+    if (loading === false) {
+      setIsFetching(false);
+    }
+  }, [loading]);
+
   const renderFooter = () => {
-    if (loading) {
+    if (loading || isFetching) {
       return (
           <View style={styles.footerContainer}>
             <ActivityIndicator size="large" color="gray" />
@@ -50,28 +60,28 @@ function CharacterView({ navigation }) {
     };
 
     return (
-      <TouchableOpacity onPress={() => handleCellPress(item)}>
-        <View style={[styles.characterContainer, characterBorderStyle]}>
-          <Image source={{ uri: item.image }} style={styles.characterImage} />
-          <Text style={styles.characterName}>{item.name}</Text>
-          <Text>Status: {item.species}</Text>
-          <Text style={styles.characteSpecies}>Species: {item.status}</Text>
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleCellPress(item)}>
+          <View style={[styles.characterContainer, characterBorderStyle]}>
+            <Image source={{ uri: item.image }} style={styles.characterImage} />
+            <Text style={styles.characterName}>{item.name}</Text>
+            <Text>Status: {item.species}</Text>
+            <Text style={styles.characteSpecies}>Species: {item.status}</Text>
+          </View>
+        </TouchableOpacity>
     );
   };
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        ref={flatListRef}
-        data={characters}
-        keyExtractor={(item, index) => `${item.id}_${index}`}
-        renderItem={renderItem}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={renderFooter}
-      />
-    </SafeAreaView>
+      <SafeAreaView style={styles.container}>
+        <FlatList
+            ref={flatListRef}
+            data={characters}
+            keyExtractor={(item, index) => `${item.id}_${index}`}
+            renderItem={renderItem}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+        />
+      </SafeAreaView>
   );
 }
 
@@ -101,6 +111,11 @@ const styles = StyleSheet.create({
   },
   characteSpecies: {
     marginBottom: 10,
+  },
+  footerContainer: {
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderColor: "#CED0CE"
   },
 });
 
