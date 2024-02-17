@@ -15,7 +15,7 @@ import LocationDetailScreen from './Location/LocationDetailScreen';
 
 const CharacterStack = createStackNavigator(
   {
-    CharacterList: CharacterScreen,
+    CharacterList: CharacterView,
     CharacterDetail: CharacterDetailScreen,
     EpisodeDetail: EpisodeDetailScreen,
   },
@@ -85,10 +85,6 @@ const TabNavigator = createBottomTabNavigator(
       if (episodeViewModel) {
         episodeViewModel.fetchEpisodes();
       }
-      const characterViewModel = navigation.state.routes.find(route => route.routeName === 'Characters').params?.viewModel;
-      if (characterViewModel) {
-        characterViewModel.fetchCharacters();
-      }
       const locationViewModel = navigation.state.routes.find(route => route.routeName === 'Locations').params?.viewModel;
       if (locationViewModel) {
         locationViewModel.fetchLocations();
@@ -120,21 +116,6 @@ function EpisodeScreen({ navigation }) {
   return <EpisodeView viewModel={episodeViewModel} />;
 }
 
-function CharacterScreen({ navigation }) {
-  const characterViewModel = new CharacterViewModel();
-
-  useEffect(() => {
-    const focusListener = navigation.addListener('willFocus', () => {
-      characterViewModel.fetchCharacters();
-    });
-
-    return () => {
-      focusListener.remove();
-    };
-  }, []);
-
-  return <CharacterView viewModel={characterViewModel} />;
-}
 function LocationScreen({ navigation }) {
   const locationViewModel = new LocationViewModel();
 

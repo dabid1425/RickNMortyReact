@@ -2,34 +2,22 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity} from 'react-native';
 import PropTypes from 'prop-types';
 import { withNavigation } from 'react-navigation';
+import useCharacterViewModel from './CharacterViewModel';
 
-function CharacterView({ viewModel, navigation }) {
+function CharacterView({ navigation }) {
+  const { characters, loading, fetchCharacters } = useCharacterViewModel();
   const flatListRef = useRef(null);
 
-  useEffect(() => {
-    const focusListener = navigation.addListener('didFocus', () => {
-      viewModel.setPageNumber(1); // Reset the page number to 1 when the screen is focused
-      viewModel.fetchCharacters(true); // Pass `true` to clear the list when reloading
-      resetFlatList();
-    });
-
-    return () => {
-      focusListener.remove();
-    };
-  }, []);
-
   const handleLoadMore = () => {
-    viewModel.fetchCharacters();
+    fetchCharacters();
   };
-  const resetFlatList = () => {
-    flatListRef.current.scrollToOffset({ animated: false, offset: 0 });
-  };
+
   const renderFooter = () => {
-    if (viewModel.isLoading) {
+    if (loading) {
       return (
-        <View style={styles.footerContainer}>
-          <ActivityIndicator size="large" color="gray" />
-        </View>
+          <View style={styles.footerContainer}>
+            <ActivityIndicator size="large" color="gray" />
+          </View>
       );
     } else {
       return null;
@@ -37,12 +25,12 @@ function CharacterView({ viewModel, navigation }) {
   };
 
   const handleCellPress = (character) => {
-    navigation.navigate('CharacterDetail', { character }); // Navigate to CharacterDetailScreen with character data
+    navigation.navigate('CharacterDetail', { character });
   };
 
   const renderItem = ({ item }) => {
     let borderColor = '';
-    const status = item.species.toLowerCase(); // Convert status to lowercase
+    const status = item.species.toLowerCase();
     switch (status) {
       case 'alive':
         borderColor = 'green';
@@ -76,7 +64,7 @@ function CharacterView({ viewModel, navigation }) {
     <SafeAreaView style={styles.container}>
       <FlatList
         ref={flatListRef}
-        data={viewModel.characters}
+        data={characters}
         keyExtractor={(item, index) => `${item.id}_${index}`}
         renderItem={renderItem}
         onEndReached={handleLoadMore}
@@ -85,12 +73,12 @@ function CharacterView({ viewModel, navigation }) {
       />
     </SafeAreaView>
   );
-};
+}
 
 CharacterView.propTypes = {
-  viewModel: PropTypes.object.isRequired,
   navigation: PropTypes.object.isRequired,
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
