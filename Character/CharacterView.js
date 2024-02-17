@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity} from 'react-native';
 import PropTypes from 'prop-types';
 import { withNavigation } from 'react-navigation';
@@ -7,23 +7,13 @@ import useCharacterViewModel from './CharacterViewModel';
 function CharacterView({ navigation }) {
   const { characters, loading, fetchCharacters } = useCharacterViewModel();
   const flatListRef = useRef(null);
-  const [isFetching, setIsFetching] = useState(false);
 
   const handleLoadMore = () => {
-    if (!isFetching) {
-      setIsFetching(true);
-      fetchCharacters();
-    }
+    fetchCharacters();
   };
 
-  useEffect(() => {
-    if (loading === false) {
-      setIsFetching(false);
-    }
-  }, [loading]);
-
   const renderFooter = () => {
-    if (loading || isFetching) {
+    if (loading) {
       return (
           <View style={styles.footerContainer}>
             <ActivityIndicator size="large" color="gray" />
@@ -111,11 +101,6 @@ const styles = StyleSheet.create({
   },
   characteSpecies: {
     marginBottom: 10,
-  },
-  footerContainer: {
-    paddingVertical: 20,
-    borderTopWidth: 1,
-    borderColor: "#CED0CE"
   },
 });
 
