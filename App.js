@@ -1,133 +1,45 @@
-import React, { useEffect } from 'react';
-import CharacterViewModel from './Character/CharacterViewModel';
-import CharacterView from './Character/CharacterView';
-import CharacterDetailScreen from './Character/CharacterDetailScreen';
-import EpisodeViewModel from './Episode/EpisodeViewModel';
-import EpisodeView from './Episode/EpisodeView';
-import EpisodeDetailScreen from './Episode/EpisodeDetailScreen';
-import LocationViewModel from './Location/LocationViewModel';
-import LocationView from './Location/LocationView';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { createAppContainer, withNavigation } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import LocationDetailScreen from './Location/LocationDetailScreen';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // Import QueryClient and QueryClientProvider
+import CharacterView from './Character/CharacterView';
+import EpisodeView from './Episode/EpisodeView';
+import LocationView from './Location/LocationView';
 
-const CharacterStack = createStackNavigator(
-  {
-    CharacterList: CharacterView,
-    CharacterDetail: CharacterDetailScreen,
-    EpisodeDetail: EpisodeDetailScreen,
-  },
-  {
-    initialRouteName: 'CharacterList',
-    defaultNavigationOptions: {
-      headerShown: false,
-    },
-  }
-);
-const EpisodeStack = createStackNavigator(
-  {
-    EpisodeList: EpisodeScreen,
-    EpisodeDetail: EpisodeDetailScreen,
-    CharacterDetail: CharacterDetailScreen,
-  },
-  {
-    initialRouteName: 'EpisodeList',
-    defaultNavigationOptions: {
-      headerShown: false,
-    },
-  }
-);
+const queryClient = new QueryClient();
 
-const LocationStack = createStackNavigator(
-  {
-    LocationList: LocationScreen,
-    LocationDetail: LocationDetailScreen,
-    CharacterDetail: CharacterDetailScreen,
-  },
-  {
-    initialRouteName: 'LocationList',
-    defaultNavigationOptions: {
-      headerShown: false,
-    },
-  }
-);
-const TabNavigator = createBottomTabNavigator(
-  {
-    Characters: {
-      screen: CharacterStack,
-      navigationOptions: {
-        tabBarIcon: ({ tintColor }) => <Icon name="user" size={20} color={tintColor} />,
-      },
-    },
-    Episodes: {
-      screen: EpisodeStack,
-      navigationOptions: {
-        tabBarIcon: ({ tintColor }) => <Icon name="video-camera" size={20} color={tintColor} />,
-      },
-    },
-    Locations: {
-      screen: LocationStack,
-      navigationOptions: {
-        tabBarIcon: ({ tintColor }) => <Icon name="globe" size={20} color={tintColor} />,
-      },
-    },
-    // Add more tabs here if needed
-  },
-  {
-    tabBarOptions: {
-      activeTintColor: 'black',
-      inactiveTintColor: 'gray',
-    },
-    tabBarOnPress: ({ navigation, defaultHandler }) => {
-      const episodeViewModel = navigation.state.routes.find(route => route.routeName === 'Episodes').params?.viewModel;
-      if (episodeViewModel) {
-        episodeViewModel.fetchEpisodes();
-      }
-      const locationViewModel = navigation.state.routes.find(route => route.routeName === 'Locations').params?.viewModel;
-      if (locationViewModel) {
-        locationViewModel.fetchLocations();
-      }
-      defaultHandler();
-    },
-  }
-);
-
-const AppContainer = createAppContainer(TabNavigator);
+const Tab = createBottomTabNavigator();
 
 export default function App() {
-  return <AppContainer />;
-}
+    return (
+        <QueryClientProvider client={queryClient}>
+            <NavigationContainer>
+                <Tab.Navigator
+                    screenOptions={({ route }) => ({
+                        tabBarIcon: ({ focused, color, size }) => {
+                            let iconName;
 
-function EpisodeScreen({ navigation }) {
-  const episodeViewModel = new EpisodeViewModel();
+                            if (route.name === 'Characters') {
+                                iconName = focused ? 'user' : 'user-o';
+                            } else if (route.name === 'Episodes') {
+                                iconName = focused ? 'video-camera' : 'video-camera';
+                            } else if (route.name === 'Locations') {
+                                iconName = focused ? 'globe' : 'globe';
+                            }
 
-  useEffect(() => {
-    const focusListener = navigation.addListener('willFocus', () => {
-      episodeViewModel.fetchEpisodes();
-    });
+                            return <Icon name={iconName} size={size} color={color} />;
+                        },
+                    })}
+                    tabBarOptions={{
+                        activeTintColor: 'black',
+                        inactiveTintColor: 'gray',
+                    }}
+                >
+                    <Tab.Screen name="Characters" component={CharacterView} />
 
-    return () => {
-      focusListener.remove();
-    };
-  }, []);
-
-  return <EpisodeView viewModel={episodeViewModel} />;
-}
-
-function LocationScreen({ navigation }) {
-  const locationViewModel = new LocationViewModel();
-
-  useEffect(() => {
-    const focusListener = navigation.addListener('willFocus', () => {
-      locationViewModel.fetchLocations();
-    });
-
-    return () => {
-      focusListener.remove();
-    };
-  }, []);
-
-  return <LocationView viewModel={locationViewModel} />;
+                </Tab.Navigator>
+            </NavigationContainer>
+        </QueryClientProvider>
+    );
 }

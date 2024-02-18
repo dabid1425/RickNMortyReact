@@ -1,53 +1,41 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import CharacterModel from './CharacterModel';
 
 function useCharacterViewModel() {
-  const [characters, setCharacters] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [isFetching, setIsFetching] = useState(false); // New state for fetching more data
-
-  useEffect(() => {
-    fetchCharacters();
-
-    // Cleanup function
-    return () => {
-      // Cancel ongoing requests or perform any cleanup if needed
-    };
-  }, []);
-
-  const fetchCharacters = async (clearList = false) => {
-    if (loading || isFetching) return;
-
-    // Set isFetching to true before making the request
-    setIsFetching(true);
-    console.log("fetching")
+  const fetchCharacters = async () => {
     try {
-      const response = await axios.get(`https://rickandmortyapi.com/api/character?page=${page}`);
-      const results = response.data.results;
-      const newCharacters = results.map(({ id, name, image, status, species, gender, origin, location, episode, url, created }) => new CharacterModel(id, name, image, status, species, gender, origin, location, episode, url, created));
-
-      if (clearList) {
-        setCharacters(newCharacters);
-      } else {
-        setCharacters(prevCharacters => [...prevCharacters, ...newCharacters]);
-        setPage(prevPage => prevPage + 1);
+      // Fetch characters data from API for the first page only
+      const response = await fetch(`https://rickandmortyapi.com/api/character`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch characters');
       }
+
+      const responseData = await response.json();
+
+
+      // Check if responseData.results is an array
+      if (!Array.isArray(responseData.results)) {
+        throw new Error('API response does not contain results array');
+      }
+
+      // Map API results to CharacterModel objects
+      const newCharacters = responseData.results.map(({ id, name, image, status, species, gender, origin, location, episode, url, created }) => new CharacterModel(id, name, image, status, species, gender, origin, location, episode, url, created));
+
+      return newCharacters;
     } catch (error) {
-      // Handle error
-    } finally {
-      // Set isFetching to false after the request is completed
-      setIsFetching(false);
-      setLoading(false);
+      // Handle any errors, e.g., log the error or show a message to the user
+      console.error('Error fetching characters:', error);
+      throw error; // Rethrow the error to mark it as handled
     }
   };
 
-  const setPageNumber = (pageNumber) => {
-    setPage(pageNumber);
-  };
 
-  return { characters, loading, fetchCharacters, setPageNumber, isFetching }; // Return isFetching along with other values
+  const { data: characters, isLoading, isError } = useQuery({
+    queryKey: ['characters'],
+    queryFn: fetchCharacters, // Just call fetchCharacters without passing any arguments
+  });
+
+  return { characters, loading: isLoading || isError, fetchCharacters };
 }
 
 export default useCharacterViewModel;
