@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity} from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import { withNavigation } from 'react-navigation';
 import useCharacterViewModel from './CharacterViewModel';
@@ -16,7 +16,7 @@ function CharacterView({ navigation }) {
     if (loading) {
       return (
           <View style={styles.footerContainer}>
-            <ActivityIndicator size="large" color="gray" />
+            <ActivityIndicator size="large" color="gray" style={styles.loadingIndicator} />
           </View>
       );
     } else {
@@ -60,8 +60,14 @@ function CharacterView({ navigation }) {
         </TouchableOpacity>
     );
   };
+
   return (
       <SafeAreaView style={styles.container}>
+        {loading && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="gray" />
+            </View>
+        )}
         <FlatList
             ref={flatListRef}
             data={characters}
@@ -78,6 +84,8 @@ function CharacterView({ navigation }) {
 CharacterView.propTypes = {
   navigation: PropTypes.object.isRequired,
 };
+
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -101,6 +109,19 @@ const styles = StyleSheet.create({
   },
   characteSpecies: {
     marginBottom: 10,
+  },
+  footerContainer: {
+    alignItems: 'center',
+  },
+  loadingContainer: {
+    position: 'absolute',
+    top: height, // Adjust the positioning as per your preference
+    left: width, // Adjust the positioning as per your preference
+    zIndex: 1, // Ensure the loading indicator is above the FlatList
+  },
+  loadingIndicator: {
+    width: 40,
+    height: 40,
   },
 });
 
