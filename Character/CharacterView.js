@@ -5,7 +5,7 @@ import { withNavigation } from 'react-navigation';
 import useCharacterViewModel from './CharacterViewModel';
 
 function CharacterView({ navigation }) {
-  const { characters, loading, fetchCharacters } = useCharacterViewModel();
+  const { characters, loading, fetchCharacters } = useCharacterViewModel(true);
   const flatListRef = useRef(null);
 
   const handleLoadMore = () => {
