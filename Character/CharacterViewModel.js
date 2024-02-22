@@ -1,3 +1,6 @@
+import {useState} from "react";
+import {useQuery} from "@tanstack/react-query";
+import CharacterModel from "./CharacterModel";
 function useCharacterViewModel(debug = false) {
   const [loading, setLoading] = useState(false); // State for loading
 
