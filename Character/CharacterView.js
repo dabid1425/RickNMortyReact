@@ -25,7 +25,7 @@ function CharacterView({ navigation }) {
   };
 
   const handleCellPress = (character) => {
-    navigation.navigate('CharacterDetail', { character });
+    //navigation.navigate('CharacterDetail', { character });
   };
 
   const renderItem = ({ item }) => {

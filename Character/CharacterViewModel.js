@@ -1,17 +1,20 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import CharacterModel from './CharacterModel';
-
-function useCharacterViewModel() {
+import {useState} from "react";
+import {useQuery} from "@tanstack/react-query";
+import CharacterModel from "./CharacterModel";
+function useCharacterViewModel(debug = false) {
   const [loading, setLoading] = useState(false); // State for loading
+
   const fetchCharacters = async () => {
     setLoading(true); // Set loading to true when fetching starts
+    // Add a 5-second delay using setTimeout
+    await new Promise(resolve => setTimeout(resolve, debug ? 5000 : 0));
+
     try {
       // Fetch characters data from API for the first page only
       const response = await Promise.race([
         fetch(`https://rickandmortyapi.com/api/character`),
         new Promise((resolve, reject) =>
-            setTimeout(() => reject(new Error('Timeout occurred')), 5000) // Timeout after 10 seconds
+            setTimeout(() => reject(new Error('Timeout occurred')), 5000) // Timeout after 5 seconds
         ),
       ]);
       if (!response.ok) {
